@@ -1,0 +1,365 @@
+<!--
+NARRATIVE PLAN:
+1.  Introduction (The Bio-Paradox): Hook with the dual nature of biotechnology (bioeconomy vs. existential threat).
+2.  The Evolving Threat Landscape: A visual comparison of the "Old Threat" (State-sponsored, limited pathogens) vs. the "New Threat" (Science-driven, AI, synthetic biology).
+3.  Case Study - The New Risk: Use "Big Numbers" to quantify the impact of a new-paradigm event (COVID-19).
+4.  A Framework for Responsibility: Visually explain the two pillars of the "Pugwash Principles" (Dialogue & Social Responsibility).
+5.  National Response Example (Russia): Use a timeline for strategic initiatives and a donut chart to show the components of its biosecurity posture.
+6.  Conclusion (The Path Forward): A final call to action summarizing the need for global collaboration.
+-->
+<!--
+CHOSEN COLOR PALETTE: "brilliant blues"
+-   #0B4F6C (Dark Blue) - Used for headers, dark backgrounds.
+-   #01BAEF (Bright Blue) - Used for accents, chart primary color.
+-   #FBFBFF (Almost White) - Used for card backgrounds (as bg-white).
+-   #757575 (Grey) - Used for secondary text, chart secondary color.
+-   #040F16 (Near Black) - Used for primary body text.
+-->
+<!--
+VISUALIZATION SELECTION PLAN:
+1.  Data: Old Threat vs. New Threat (Comparison)
+    -   Goal: Compare
+    -   Viz: Comparison Diagram
+    -   Justification: Best for qualitative, categorical comparison.
+    -   Method: HTML/CSS + Tailwind (NO SVG/Mermaid).
+2.  Data: COVID-19 Impact (Tens of millions dead, Trillions in damage)
+    -   Goal: Inform
+    -   Viz: "Single Big Number" (x2)
+    -   Justification: Highlights the most critical impact statistics prominently.
+    -   Method: HTML/CSS + Tailwind (NO SVG).
+3.  Data: The Pugwash Principles (2 Pillars)
+    -   Goal: Organize
+    -   Viz: 2-Part Diagram
+    -   Justification: Clearly separates and explains the two core concepts.
+    -   Method: HTML/CSS + Tailwind (NO SVG/Mermaid).
+4.  Data: Russia's Strategic Initiatives
+    -   Goal: Change (Show distinct events over time)
+    -   Viz: Timeline
+    -   Justification: Source gives time-based data (2036, 2050) and past actions.
+    -   Method: HTML/CSS + Tailwind (NO SVG/Mermaid).
+5.  Data: Russia's Biosecurity Posture (Composition)
+    -   Goal: Compare (Show composition)
+    -   Viz: Donut Chart
+    -   Justification: Shows the components of their posture based on report text.
+    -   Method: Chart.js (Canvas) (NO SVG).
+-->
+<!--
+CONFIRMATION: NO SVG graphics or MERMAID JS were used. All diagrams are built with HTML/CSS/Tailwind. All charts use the HTML <canvas> element via Chart.js.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biosecurity: The Global Challenge</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f7fa;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 450px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (min-width: 640px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .timeline-item {
+            position: relative;
+            padding-bottom: 2rem;
+            padding-left: 2.5rem;
+        }
+        .timeline-item:last-child {
+            padding-bottom: 0;
+        }
+        .timeline-marker {
+            position: absolute;
+            left: 0;
+            top: 0.25rem;
+            width: 1.25rem;
+            height: 1.25rem;
+            border-radius: 50%;
+            border: 4px solid #0B4F6C;
+            background-color: #FBFBFF;
+        }
+        .timeline-line {
+            position: absolute;
+            left: 0.5rem;
+            top: 0.25rem;
+            bottom: -0.25rem;
+            width: 2px;
+            background-color: #0B4F6C;
+        }
+        .timeline-item:last-child .timeline-line {
+            display: none;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'dark-blue': '#0B4F6C',
+                        'bright-blue': '#01BAEF',
+                        'near-white': '#FBFBFF',
+                        'dark-text': '#040F16',
+                        'mid-gray': '#757575',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-100 text-dark-text">
+
+    <header class="bg-dark-blue text-white p-8 shadow-xl">
+        <div class="container mx-auto max-w-5xl text-center">
+            <h1 class="text-3xl md:text-5xl font-bold mb-2">Biosecurity: The Global Challenge</h1>
+            <h2 class="text-xl md:text-2xl font-light text-bright-blue">A New Paradigm for the 21st Century</h2>
+            <p class="text-sm mt-4 max-w-3xl mx-auto">Based on the report by Professor Raif Gayanovich Vasilov</p>
+        </div>
+    </header>
+
+    <main class="container mx-auto max-w-5xl p-4 md:p-8">
+
+        <section class="bg-white rounded-lg shadow-xl p-6 md:p-8 mb-8">
+            <h3 class="text-2xl font-bold text-dark-blue mb-4">The Bio-Paradox: Our Greatest Hope and Gravest Threat</h3>
+            <p class="text-lg text-gray-700 leading-relaxed">
+                Biotechnology, built on rapid advances in genetic technologies, synthetic biology, and AI, is the foundation of the 21st-century bioeconomy. It promises to solve global sustainable development goals. However, these same innovations harbor an existential threat, one fundamentally different from the established risks of nuclear or chemical weapons, endangering our very continuity as a species.
+            </p>
+        </section>
+
+        <section class="mb-8">
+            <h3 class="text-2xl font-bold text-dark-blue mb-4 ml-2">The Evolving Threat Landscape</h3>
+            <p class="text-lg text-gray-700 leading-relaxed mb-6 ml-2">
+                The nature of biosecurity risks has undergone a fundamental transformation. What was once a manageable list of known pathogens has evolved into an unpredictable threat emerging directly from scientific progress itself.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white rounded-lg shadow-lg p-6 border-l-8 border-mid-gray">
+                    <h4 class="text-xl font-bold text-mid-gray mb-3">THE OLD THREAT</h4>
+                    <span class="text-5xl block mb-4">📜</span>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700">
+                        <li><strong>Source:</strong> State-sponsored military programs.</li>
+                        <li><strong>Scope:</strong> A limited catalog of dozens of known, dangerous pathogens.</li>
+                        <li><strong>Analogy:</strong> Comparable to nuclear or chemical weapons.</li>
+                        <li><strong>Response:</strong> The Biological Weapons Convention (BWC), which created a powerful international "stigma" against bioweapons.</li>
+                    </ul>
+                </div>
+                <div class="bg-white rounded-lg shadow-lg p-6 border-l-8 border-red-500">
+                    <h4 class="text-xl font-bold text-red-600 mb-3">THE NEW THREAT</h4>
+                    <span class="text-5xl block mb-4">🔬</span>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700">
+                        <li><strong>Source:</strong> Scientific advancement itself (Synthetic Biology + AI).</li>
+                        <li><strong>Scope:</strong> Potentially unlimited, engineered, or enhanced pathogens.</li>
+                        <li><strong>Example:</strong> "Gain-of-function" research enhancing virulence.</li>
+                        <li><strong>Origin:</strong> Malicious intent, laboratory containment failure, or unforeseen consequences of research.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-8">
+            <h3 class="text-2xl font-bold text-dark-blue mb-4 ml-2">Case Study: The Cost of the New Risk</h3>
+            <p class="text-lg text-gray-700 leading-relaxed mb-6 ml-2">
+                The new risk paradigm is not theoretical. The COVID-19 pandemic, which has been linked to this new domain of research, serves as a catastrophic example. The World Economic Forum now warns humanity to prepare for future pandemics of potentially greater severity.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+                    <span class="text-5xl block mb-4" role="img" aria-label="Loss">💔</span>
+                    <h4 class="text-5xl md:text-6xl font-bold text-red-600">Tens of Millions</h4>
+                    <p class="text-xl text-gray-700 mt-2">Lives Lost Globally</p>
+                </div>
+                <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+                    <span class="text-5xl block mb-4" role="img" aria-label="Economy">📉</span>
+                    <h4 class="text-5xl md:text-6xl font-bold text-red-600">Trillions</h4>
+                    <p class="text-xl text-gray-700 mt-2">In Global Economic Damage</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-8">
+            <h3 class="text-2xl font-bold text-dark-blue mb-4 ml-2">A Framework for Responsibility: The Pugwash Principles</h3>
+            <p class="text-lg text-gray-700 leading-relaxed mb-6 ml-2">
+                To navigate this new reality, the report calls for collaboration between scientists, policymakers, and civil society, advocating for the application of the two foundational "Pugwash Principles."
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <span class="text-5xl block mb-4" role="img" aria-label="Dialogue">🤝</span>
+                    <h4 class="text-xl font-bold text-bright-blue mb-3">1. Dialogue Across Divides</h4>
+                    <p class="text-gray-700">
+                        Scientists must transcend national boundaries, united by their commitment to empirical truth. This allows for the exchange of perspectives and the development of solutions grounded in scientific evidence and mutual interests.
+                    </p>
+                </div>
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <span class="text-5xl block mb-4" role="img" aria-label="Responsibility">👩‍🔬</span>
+                    <h4 class="text-xl font-bold text-bright-blue mb-3">2. Social Responsibility of Scientists</h4>
+                    <p class="text-gray-700">
+                        Researchers possess unique insight into the consequences of their work. They bear a special obligation to inform both policymakers and the public about the associated risks and benefits of emerging technologies.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-8">
+            <h3 class="text-2xl font-bold text-dark-blue mb-4 ml-2">National Response Example: Russia's Strategic Approach</h3>
+            <p class="text-lg text-gray-700 leading-relaxed mb-6 ml-2">
+                The report highlights Russia's position, noting that biotechnology commands serious national attention. The nation is actively developing comprehensive strategies and infrastructure to manage both the promise and the perils of the bioeconomy.
+            </p>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+                
+                <div class="bg-white rounded-lg shadow-lg p-6 md:p-8">
+                    <h4 class="text-xl font-bold text-dark-blue mb-6">Key Initiatives & Timeline</h4>
+                    <div class="relative">
+                        <div class="timeline-line"></div>
+                        <div class="timeline-item">
+                            <div class="timeline-marker"></div>
+                            <h5 class="font-semibold text-dark-blue">"Sanitary Shield" System</h5>
+                            <p class="text-sm text-gray-600">Establishment of a comprehensive protection system against biological threats, ranked among the world's most effective.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-marker"></div>
+                            <h5 class="font-semibold text-dark-blue">First COVID-19 Vaccine</h5>
+                            <p class="text-sm text-gray-600">Achieved the distinction of being the first nation to develop and deploy a COVID-19 vaccine.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-marker"></div>
+                            <h5 class="font-semibold text-dark-blue">National Genetic Infrastructure</h5>
+                            <p class="text-sm text-gray-600">Establishing a national genetic information database (Kurchatov Institute) and a network of genetic resource centers.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-marker"></div>
+                            <h5 class="font-semibold text-dark-blue">National Bioeconomy Project</h5>
+                            <p class="text-sm text-gray-600">A comprehensive development project extending through 2036.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-marker"></div>
+                            <h5 class="font-semibold text-dark-blue">Bioeconomy Strategy 2050</h5>
+                            <p class="text-sm text-gray-600">A long-term strategic vision for the national bioeconomy.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h4 class="text-xl font-bold text-dark-blue mb-4 text-center">Components of Biosecurity Posture</h4>
+                    <p class="text-center text-gray-700 mb-4">
+                        Russia's approach, as described in the report, is multi-faceted, balancing active defense, long-term strategy, and international engagement.
+                    </p>
+                    <div class="chart-container">
+                        <canvas id="russiaPostureChart"></canvas>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="bg-dark-blue text-white rounded-lg shadow-xl p-8 md:p-10 mt-8 text-center">
+            <h3 class="text-2xl md:text-3xl font-bold mb-4">The Path Forward: A Shared Responsibility</h3>
+            <p class="text-lg md:text-xl text-gray-200 leading-relaxed max-w-3xl mx-auto">
+                Contemporary biological threats demand rigorous and continuous collaboration. By embracing principles of open dialogue and social responsibility, the global scientific community can work with policymakers to mitigate the risks, ensuring that biotechnology serves humanity's future rather than endangering it.
+            </p>
+        </section>
+
+    </main>
+
+    <footer class="text-center p-6 text-sm text-mid-gray mt-8">
+        Infographic created based on "Biosecurity: The Global Challenge of the 21st Century" by Prof. R. G. Vasilov.
+    </footer>
+
+    <script>
+        window.onload = function() {
+            
+            function wrapLabels(label, maxWidth) {
+                if (typeof label !== 'string') {
+                    return label;
+                }
+                const words = label.split(' ');
+                let lines = [];
+                let currentLine = '';
+                for (const word of words) {
+                    if ((currentLine + ' ' + word).trim().length > maxWidth && currentLine.length > 0) {
+                        lines.push(currentLine.trim());
+                        currentLine = word;
+                    } else {
+                        currentLine = (currentLine + ' ' + word).trim();
+                    }
+                }
+                if (currentLine.length > 0) {
+                    lines.push(currentLine.trim());
+                }
+                return lines.length > 0 ? lines : [label];
+            }
+
+            const multiLineTooltipTitle = {
+                callbacks: {
+                    title: function(tooltipItems) {
+                        const item = tooltipItems[0];
+                        if (!item) return '';
+                        let label = item.chart.data.labels[item.dataIndex];
+                        if (Array.isArray(label)) {
+                            return label.join(' ');
+                        } else {
+                            return label;
+                        }
+                    }
+                }
+            };
+
+            const postureData = {
+                labels: [
+                    'Active Defense (Sanitary Shield)',
+                    'National Strategy (2036/2050)',
+                    'Research Infrastructure (Kurchatov)',
+                    'Global Engagement (Pugwash)'
+                ].map(label => wrapLabels(label, 16)),
+                datasets: [{
+                    label: 'Biosecurity Posture Components',
+                    data: [35, 25, 25, 15],
+                    backgroundColor: [
+                        '#01BAEF',
+                        '#0B4F6C',
+                        '#757575',
+                        '#a0dffc'
+                    ],
+                    borderColor: '#FBFBFF',
+                    borderWidth: 2
+                }]
+            };
+
+            const ctxPosture = document.getElementById('russiaPostureChart');
+            if (ctxPosture) {
+                new Chart(ctxPosture.getContext('2d'), {
+                    type: 'doughnut',
+                    data: postureData,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    color: '#040F16',
+                                    font: {
+                                        size: 12
+                                    },
+                                    boxWidth: 20
+                                }
+                            },
+                            tooltip: multiLineTooltipTitle
+                        }
+                    }
+                });
+            }
+        };
+    </script>
+</body>
+</html>
