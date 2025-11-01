@@ -17,31 +17,11 @@ CHOSEN COLOR PALETTE: "brilliant blues"
 -->
 <!--
 VISUALIZATION SELECTION PLAN:
-1.  Data: Old Threat vs. New Threat (Comparison)
-    -   Goal: Compare
-    -   Viz: Comparison Diagram
-    -   Justification: Best for qualitative, categorical comparison.
-    -   Method: HTML/CSS + Tailwind (NO SVG/Mermaid).
-2.  Data: COVID-19 Impact (Tens of millions dead, Trillions in damage)
-    -   Goal: Inform
-    -   Viz: "Single Big Number" (x2)
-    -   Justification: Highlights the most critical impact statistics prominently.
-    -   Method: HTML/CSS + Tailwind (NO SVG).
-3.  Data: The Pugwash Principles (2 Pillars)
-    -   Goal: Organize
-    -   Viz: 2-Part Diagram
-    -   Justification: Clearly separates and explains the two core concepts.
-    -   Method: HTML/CSS + Tailwind (NO SVG/Mermaid).
-4.  Data: Russia's Strategic Initiatives
-    -   Goal: Change (Show distinct events over time)
-    -   Viz: Timeline
-    -   Justification: Source gives time-based data (2036, 2050) and past actions.
-    -   Method: HTML/CSS + Tailwind (NO SVG/Mermaid).
-5.  Data: Russia's Biosecurity Posture (Composition)
-    -   Goal: Compare (Show composition)
-    -   Viz: Donut Chart
-    -   Justification: Shows the components of their posture based on report text.
-    -   Method: Chart.js (Canvas) (NO SVG).
+1.  Data: Old Threat vs. New Threat (Comparison) - HTML/Tailwind Diagram
+2.  Data: COVID-19 Impact (Big Numbers) - HTML/Tailwind
+3.  Data: The Pugwash Principles (2 Pillars) - HTML/Tailwind Diagram
+4.  Data: Russia's Strategic Initiatives (Timeline) - HTML/Tailwind Diagram
+5.  Data: Russia's Biosecurity Posture (Composition) - Chart.js (Canvas) + Custom HTML Legend
 -->
 <!--
 CONFIRMATION: NO SVG graphics or MERMAID JS were used. All diagrams are built with HTML/CSS/Tailwind. All charts use the HTML <canvas> element via Chart.js.
@@ -51,15 +31,22 @@ CONFIRMATION: NO SVG graphics or MERMAID JS were used. All diagrams are built wi
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Titles will be switched by JS -->
     <title>Biosecurity: The Global Challenge</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+JP:wght@400;700&display=swap');
+        
+        /* Apply Inter by default, Noto Sans JP for Japanese */
         body {
             font-family: 'Inter', sans-serif;
             background-color: #f4f7fa;
         }
+        :lang(ja) {
+             font-family: 'Noto Sans JP', sans-serif;
+        }
+        
         .chart-container {
             position: relative;
             width: 100%;
@@ -103,6 +90,47 @@ CONFIRMATION: NO SVG graphics or MERMAID JS were used. All diagrams are built wi
         .timeline-item:last-child .timeline-line {
             display: none;
         }
+
+        /* Language Switcher Styles */
+        .lang-switcher button {
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.375rem;
+            font-weight: 600;
+            color: #FBFBFF;
+            opacity: 0.7;
+            transition: opacity 0.2s, background-color 0.2s;
+        }
+        .lang-switcher button:hover {
+            opacity: 1;
+        }
+        .lang-switcher button.active {
+            opacity: 1;
+            background-color: #01BAEF;
+            color: #0B4F6C;
+        }
+        
+        /* Translatable Content Styles */
+        /* Hide all translatable elements by default */
+        .translatable {
+            display: none;
+        }
+
+        /* Show only elements for the active language (set on <html> tag) */
+        :lang(en) .lang-en,
+        :lang(ja) .lang-ja,
+        :lang(ru) .lang-ru {
+            /* Use 'revert' to let them behave as they normally would (block, inline, etc.) */
+            /* This is safer than forcing 'block' or 'inline' */
+            display: revert; 
+        }
+
+        /* Fix for list items which are block-level */
+        :lang(en) li.lang-en,
+        :lang(ja) li.lang-ja,
+        :lang(ru) li.lang-ru {
+            display: list-item;
+        }
+
     </style>
     <script>
         tailwind.config = {
@@ -124,203 +152,456 @@ CONFIRMATION: NO SVG graphics or MERMAID JS were used. All diagrams are built wi
 
     <header class="bg-dark-blue text-white p-8 shadow-xl">
         <div class="container mx-auto max-w-5xl text-center">
-            <h1 class="text-3xl md:text-5xl font-bold mb-2">Biosecurity: The Global Challenge</h1>
-            <h2 class="text-xl md:text-2xl font-light text-bright-blue">A New Paradigm for the 21st Century</h2>
-            <p class="text-sm mt-4 max-w-3xl mx-auto">Based on the report by Professor Raif Gayanovich Vasilov</p>
+            
+            <div class="lang-switcher flex justify-center space-x-2 mb-4">
+                <button id="btn-en" class="active" onclick="switchLanguage('en')">EN</button>
+                <button id="btn-ja" onclick="switchLanguage('ja')">JA</button>
+                <button id="btn-ru" onclick="switchLanguage('ru')">RU</button>
+            </div>
+
+            <h1 class="text-3xl md:text-5xl font-bold mb-2">
+                <span class="translatable lang-en">Biosecurity: The Global Challenge</span>
+                <span class="translatable lang-ja">バイオセキュリティ：地球規模の課題</span>
+                <span class="translatable lang-ru">Биобезопасность: Глобальный вызов</span>
+            </h1>
+            <h2 class="text-xl md:text-2xl font-light text-bright-blue">
+                <span class="translatable lang-en">A New Paradigm for the 21st Century</span>
+                <span class="translatable lang-ja">21世紀の新たなパラダイム</span>
+                <span class="translatable lang-ru">Новая парадигма 21-го века</span>
+            </h2>
+            <p class="text-sm mt-4 max-w-3xl mx-auto">
+                <span class="translatable lang-en">Based on the report by Professor Raif Gayanovich Vasilov</span>
+                <span class="translatable lang-ja">Raif Gayanovich Vasilov教授のレポートに基づく</span>
+                <span class="translatable lang-ru">На основе доклада профессора Раифа Гаяновича Василова</span>
+            </p>
         </div>
     </header>
 
     <main class="container mx-auto max-w-5xl p-4 md:p-8">
 
         <section class="bg-white rounded-lg shadow-xl p-6 md:p-8 mb-8">
-            <h3 class="text-2xl font-bold text-dark-blue mb-4">The Bio-Paradox: Our Greatest Hope and Gravest Threat</h3>
+            <h3 class="text-2xl font-bold text-dark-blue mb-4">
+                <span class="translatable lang-en">The Bio-Paradox: Our Greatest Hope and Gravest Threat</span>
+                <span class="translatable lang-ja">バイオ・パラドックス：最大の希望と最悪の脅威</span>
+                <span class="translatable lang-ru">Био-парадокс: Наша величайшая надежда и самая серьезная угроза</span>
+            </h3>
             <p class="text-lg text-gray-700 leading-relaxed">
-                Biotechnology, built on rapid advances in genetic technologies, synthetic biology, and AI, is the foundation of the 21st-century bioeconomy. It promises to solve global sustainable development goals. However, these same innovations harbor an existential threat, one fundamentally different from the established risks of nuclear or chemical weapons, endangering our very continuity as a species.
+                <span class="translatable lang-en">Biotechnology, built on rapid advances in genetic technologies, synthetic biology, and AI, is the foundation of the 21st-century bioeconomy. It promises to solve global sustainable development goals. However, these same innovations harbor an existential threat, one fundamentally different from the established risks of nuclear or chemical weapons, endangering our very continuity as a species.</span>
+                <span class="translatable lang-ja">遺伝子技術、合成生物学、AIの急速な進歩の上に築かれたバイオテクノロジーは、21世紀のバイオエコノミーの基盤です。それは世界の持続可能な開発目標を解決すると期待されています。しかし、これらの同じイノベーションは、核兵器や化学兵器の既存のリスクとは根本的に異なる実存的脅威を内包しており、生物種としての私たち自身の存続を危険にさらしています。</span>
+                <span class="translatable lang-ru">Биотехнологии, основанные на быстром прогрессе в генных технологиях, синтетической биологии и ИИ, являются фундаментом биоэкономики 21-го века. Они обещают решить глобальные цели устойчивого развития. Однако эти же инновации таят в себе экзистенциальную угрозу, коренным образом отличающуюся от установленных рисков ядерного или химического оружия, ставя под угрозу само наше выживание как биологического вида.</span>
             </p>
         </section>
 
         <section class="mb-8">
-            <h3 class="text-2xl font-bold text-dark-blue mb-4 ml-2">The Evolving Threat Landscape</h3>
+            <h3 class="text-2xl font-bold text-dark-blue mb-4 ml-2">
+                <span class="translatable lang-en">The Evolving Threat Landscape</span>
+                <span class="translatable lang-ja">進化する脅威のランドスケープ</span>
+                <span class="translatable lang-ru">Эволюционирующий ландшафт угроз</span>
+            </h3>
             <p class="text-lg text-gray-700 leading-relaxed mb-6 ml-2">
-                The nature of biosecurity risks has undergone a fundamental transformation. What was once a manageable list of known pathogens has evolved into an unpredictable threat emerging directly from scientific progress itself.
+                <span class="translatable lang-en">The nature of biosecurity risks has undergone a fundamental transformation. What was once a manageable list of known pathogens has evolved into an unpredictable threat emerging directly from scientific progress itself.</span>
+                <span class="translatable lang-ja">バイオセキュリティリスクの性質は根本的な変貌を遂げました。かつては管理可能だった既知の病原体のリストは、科学の進歩そのものから直接生じる予測不可能な脅威へと進化しました。</span>
+                <span class="translatable lang-ru">Природа рисков биобезопасности претерпела фундаментальную трансформацию. То, что когда-то было управляемым списком известных патогенов, превратилось в непредсказуемую угрозу, исходящую непосредственно из самого научного прогресса.</span>
             </p>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="bg-white rounded-lg shadow-lg p-6 border-l-8 border-mid-gray">
-                    <h4 class="text-xl font-bold text-mid-gray mb-3">THE OLD THREAT</h4>
+                    <h4 class="text-xl font-bold text-mid-gray mb-3">
+                        <span class="translatable lang-en">THE OLD THREAT</span>
+                        <span class="translatable lang-ja">従来の脅威</span>
+                        <span class="translatable lang-ru">СТАРАЯ УГРОЗА</span>
+                    </h4>
                     <span class="text-5xl block mb-4">📜</span>
                     <ul class="list-disc list-inside space-y-2 text-gray-700">
-                        <li><strong>Source:</strong> State-sponsored military programs.</li>
-                        <li><strong>Scope:</strong> A limited catalog of dozens of known, dangerous pathogens.</li>
-                        <li><strong>Analogy:</strong> Comparable to nuclear or chemical weapons.</li>
-                        <li><strong>Response:</strong> The Biological Weapons Convention (BWC), which created a powerful international "stigma" against bioweapons.</li>
+                        <li class="translatable lang-en"><strong>Source:</strong> State-sponsored military programs.</li>
+                        <li class="translatable lang-ja"><strong>発生源:</strong> 国家主導の軍事プログラム。</li>
+                        <li class="translatable lang-ru"><strong>Источник:</strong> Государственные военные программы.</li>
+
+                        <li class="translatable lang-en"><strong>Scope:</strong> A limited catalog of dozens of known, dangerous pathogens.</li>
+                        <li class="translatable lang-ja"><strong>範囲:</strong> 数十種類の既知の危険な病原体に限定されたカタログ。</li>
+                        <li class="translatable lang-ru"><strong>Масштаб:</strong> Ограниченный каталог из нескольких десятков известных, опасных патогенов.</li>
+
+                        <li class="translatable lang-en"><strong>Analogy:</strong> Comparable to nuclear or chemical weapons.</li>
+                        <li class="translatable lang-ja"><strong>類似性:</strong> 核兵器や化学兵器に匹敵。</li>
+                        <li class="translatable lang-ru"><strong>Аналогия:</strong> Сравнимо с ядерным или химическим оружием.</li>
+
+                        <li class="translatable lang-en"><strong>Response:</strong> The Biological Weapons Convention (BWC), which created a powerful international "stigma" against bioweapons.</li>
+                        <li class="translatable lang-ja"><strong>対応:</strong> 生物兵器禁止条約（BWC）。生物兵器に対する強力な国際的「スティグマ（汚名）」を創設。</li>
+                        <li class="translatable lang-ru"><strong>Ответ:</strong> Конвенция о биологическом оружии (КБО), создавшая мощную международную "стигму" против биооружия.</li>
                     </ul>
                 </div>
                 <div class="bg-white rounded-lg shadow-lg p-6 border-l-8 border-red-500">
-                    <h4 class="text-xl font-bold text-red-600 mb-3">THE NEW THREAT</h4>
+                    <h4 class="text-xl font-bold text-red-600 mb-3">
+                        <span class="translatable lang-en">THE NEW THREAT</span>
+                        <span class="translatable lang-ja">新たな脅威</span>
+                        <span class="translatable lang-ru">НОВАЯ УГРОЗА</span>
+                    </h4>
                     <span class="text-5xl block mb-4">🔬</span>
                     <ul class="list-disc list-inside space-y-2 text-gray-700">
-                        <li><strong>Source:</strong> Scientific advancement itself (Synthetic Biology + AI).</li>
-                        <li><strong>Scope:</strong> Potentially unlimited, engineered, or enhanced pathogens.</li>
-                        <li><strong>Example:</strong> "Gain-of-function" research enhancing virulence.</li>
-                        <li><strong>Origin:</strong> Malicious intent, laboratory containment failure, or unforeseen consequences of research.</li>
+                        <li class="translatable lang-en"><strong>Source:</strong> Scientific advancement itself (Synthetic Biology + AI).</li>
+                        <li class="translatable lang-ja"><strong>発生源:</strong> 科学の進歩そのもの（合成生物学 + AI）。</li>
+                        <li class="translatable lang-ru"><strong>Источник:</strong> Сам научный прогресс (Синтетическая биология + ИИ).</li>
+
+                        <li class="translatable lang-en"><strong>Scope:</strong> Potentially unlimited, engineered, or enhanced pathogens.</li>
+                        <li class="translatable lang-ja"><strong>範囲:</strong> 潜在的に無制限の、設計・強化された病原体。</li>
+                        <li class="translatable lang-ru"><strong>Масштаб:</strong> Потенциально неограниченное количество созданных или усиленных патогенов.</li>
+
+                        <li class="translatable lang-en"><strong>Example:</strong> "Gain-of-function" research enhancing virulence.</li>
+                        <li class="translatable lang-ja"><strong>例:</strong> 毒性を高める「機能獲得」研究。</li>
+                        <li class="translatable lang-ru"><strong>Пример:</strong> Исследования "усиления функций" (Gain-of-function) для повышения вирулентности.</li>
+
+                        <li class="translatable lang-en"><strong>Origin:</strong> Malicious intent, laboratory containment failure, or unforeseen consequences of research.</li>
+                        <li class="translatable lang-ja"><strong>原因:</strong> 悪意、実験室の封じ込め失敗、または研究の予期せぬ結果。</li>
+                        <li class="translatable lang-ru"><strong>Происхождение:</strong> Злой умысел, утечка из лаборатории или непредвиденные последствия исследований.</li>
                     </ul>
                 </div>
             </div>
         </section>
 
         <section class="mb-8">
-            <h3 class="text-2xl font-bold text-dark-blue mb-4 ml-2">Case Study: The Cost of the New Risk</h3>
+            <h3 class="text-2xl font-bold text-dark-blue mb-4 ml-2">
+                <span class="translatable lang-en">Case Study: The Cost of the New Risk</span>
+                <span class="translatable lang-ja">ケーススタディ：新たなリスクのコスト</span>
+                <span class="translatable lang-ru">Пример: Цена нового риска</span>
+            </h3>
             <p class="text-lg text-gray-700 leading-relaxed mb-6 ml-2">
-                The new risk paradigm is not theoretical. The COVID-19 pandemic, which has been linked to this new domain of research, serves as a catastrophic example. The World Economic Forum now warns humanity to prepare for future pandemics of potentially greater severity.
+                <span class="translatable lang-en">The new risk paradigm is not theoretical. The COVID-19 pandemic, which has been linked to this new domain of research, serves as a catastrophic example. The World Economic Forum now warns humanity to prepare for future pandemics of potentially greater severity.</span>
+                <span class="translatable lang-ja">新しいリスクパラダイムは理論上のものではありません。この新しい研究領域に関連しているとされるCOVID-19パンデミックは、壊滅的な例として挙げられます。世界経済フォーラムは今、人類に対し、潜在的により深刻な未来のパンデミックに備えるよう警告しています。</span>
+                <span class="translatable lang-ru">Новая парадигма риска не теоретическая. Пандемия COVID-19, которую связывают с этой новой областью исследований, служит катастрофическим примером. Всемирный экономический форум теперь предупреждает человечество о необходимости готовиться к будущим пандемиям, которые могут быть еще более серьезными.</span>
             </p>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="bg-white rounded-lg shadow-lg p-6 text-center">
                     <span class="text-5xl block mb-4" role="img" aria-label="Loss">💔</span>
-                    <h4 class="text-5xl md:text-6xl font-bold text-red-600">Tens of Millions</h4>
-                    <p class="text-xl text-gray-700 mt-2">Lives Lost Globally</p>
+                    <h4 class="text-5xl md:text-6xl font-bold text-red-600">
+                        <span class="translatable lang-en">Tens of Millions</span>
+                        <span class="translatable lang-ja">数千万人</span>
+                        <span class="translatable lang-ru">Десятки миллионов</span>
+                    </h4>
+                    <p class="text-xl text-gray-700 mt-2">
+                        <span class="translatable lang-en">Lives Lost Globally</span>
+                        <span class="translatable lang-ja">世界での死者数</span>
+                        <span class="translatable lang-ru">Потерянных жизней по всему миру</span>
+                    </p>
                 </div>
                 <div class="bg-white rounded-lg shadow-lg p-6 text-center">
                     <span class="text-5xl block mb-4" role="img" aria-label="Economy">📉</span>
-                    <h4 class="text-5xl md:text-6xl font-bold text-red-600">Trillions</h4>
-                    <p class="text-xl text-gray-700 mt-2">In Global Economic Damage</p>
+                    <h4 class="text-5xl md:text-6xl font-bold text-red-600">
+                        <span class="translatable lang-en">Trillions</span>
+                        <span class="translatable lang-ja">数兆ドル</span>
+                        <span class="translatable lang-ru">Триллионы</span>
+                    </h4>
+                    <p class="text-xl text-gray-700 mt-2">
+                        <span class="translatable lang-en">In Global Economic Damage</span>
+                        <span class="translatable lang-ja">世界的な経済的損害</span>
+                        <span class="translatable lang-ru">Глобального экономического ущерба</span>
+                    </p>
                 </div>
             </div>
         </section>
 
         <section class="mb-8">
-            <h3 class="text-2xl font-bold text-dark-blue mb-4 ml-2">A Framework for Responsibility: The Pugwash Principles</h3>
+            <h3 class="text-2xl font-bold text-dark-blue mb-4 ml-2">
+                <span class="translatable lang-en">A Framework for Responsibility: The Pugwash Principles</span>
+                <span class="translatable lang-ja">責任のための枠組み：パグウォッシュ原則</span>
+                <span class="translatable lang-ru">Основа для ответственности: Пагвошские принципы</span>
+            </h3>
             <p class="text-lg text-gray-700 leading-relaxed mb-6 ml-2">
-                To navigate this new reality, the report calls for collaboration between scientists, policymakers, and civil society, advocating for the application of the two foundational "Pugwash Principles."
+                <span class="translatable lang-en">To navigate this new reality, the report calls for collaboration between scientists, policymakers, and civil society, advocating for the application of the two foundational "Pugwash Principles."</span>
+                <span class="translatable lang-ja">この新しい現実を乗り切るため、レポートは科学者、政策立案者、市民社会の協力を求め、2つの基本的な「パグウォッシュ原則」の適用を提唱しています。</span>
+                <span class="translatable lang-ru">Чтобы справиться с этой новой реальностью, в докладе содержится призыв к сотрудничеству между учеными, политиками и гражданским обществом, выступая за применение двух основополагающих "Пагвошских принципов".</span>
             </p>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="bg-white rounded-lg shadow-lg p-6">
                     <span class="text-5xl block mb-4" role="img" aria-label="Dialogue">🤝</span>
-                    <h4 class="text-xl font-bold text-bright-blue mb-3">1. Dialogue Across Divides</h4>
+                    <h4 class="text-xl font-bold text-bright-blue mb-3">
+                        <span class="translatable lang-en">1. Dialogue Across Divides</span>
+                        <span class="translatable lang-ja">1. 分断を超えた対話</span>
+                        <span class="translatable lang-ru">1. Диалог поверх барьеров</span>
+                    </h4>
                     <p class="text-gray-700">
-                        Scientists must transcend national boundaries, united by their commitment to empirical truth. This allows for the exchange of perspectives and the development of solutions grounded in scientific evidence and mutual interests.
+                        <span class="translatable lang-en">Scientists must transcend national boundaries, united by their commitment to empirical truth. This allows for the exchange of perspectives and the development of solutions grounded in scientific evidence and mutual interests.</span>
+                        <span class="translatable lang-ja">科学者は、経験的真実へのコミットメントによって結束し、国境を超えなければなりません。これにより、視点の交換と、科学的証拠と共通の利益に基づいた解決策の開発が可能になります。</span>
+                        <span class="translatable lang-ru">Ученые должны выходить за рамки национальных границ, объединенные своей приверженностью эмпирической истине. Это позволяет обмениваться мнениями и разрабатывать решения, основанные на научных данных и взаимных интересах.</span>
                     </p>
                 </div>
                 <div class="bg-white rounded-lg shadow-lg p-6">
                     <span class="text-5xl block mb-4" role="img" aria-label="Responsibility">👩‍🔬</span>
-                    <h4 class="text-xl font-bold text-bright-blue mb-3">2. Social Responsibility of Scientists</h4>
+                    <h4 class="text-xl font-bold text-bright-blue mb-3">
+                        <span class="translatable lang-en">2. Social Responsibility of Scientists</span>
+                        <span class="translatable lang-ja">2. 科学者の社会的責任</span>
+                        <span class="translatable lang-ru">2. Социальная ответственность ученых</span>
+                    </h4>
                     <p class="text-gray-700">
-                        Researchers possess unique insight into the consequences of their work. They bear a special obligation to inform both policymakers and the public about the associated risks and benefits of emerging technologies.
+                        <span class="translatable lang-en">Researchers possess unique insight into the consequences of their work. They bear a special obligation to inform both policymakers and the public about the associated risks and benefits of emerging technologies.</span>
+                        <span class="translatable lang-ja">研究者は、自らの研究がもたらす結果について独自の洞察を持っています。彼らは、新興技術に伴うリスクと利点の両方について、政策立案者と一般市民に情報を提供する特別な義務を負っています。</span>
+                        <span class="translatable lang-ru">Исследователи обладают уникальным пониманием последствий своей работы. Они несут особую обязанность информировать как политиков, так и общественность о связанных с этим рисках и преимуществах новых технологий.</span>
                     </p>
                 </div>
             </div>
         </section>
 
         <section class="mb-8">
-            <h3 class="text-2xl font-bold text-dark-blue mb-4 ml-2">National Response Example: Russia's Strategic Approach</h3>
+            <h3 class="text-2xl font-bold text-dark-blue mb-4 ml-2">
+                <span class="translatable lang-en">National Response Example: Russia's Strategic Approach</span>
+                <span class="translatable lang-ja">国家の対応例：ロシアの戦略的アプローチ</span>
+                <span class="translatable lang-ru">Пример национального ответа: Стратегический подход России</span>
+            </h3>
             <p class="text-lg text-gray-700 leading-relaxed mb-6 ml-2">
-                The report highlights Russia's position, noting that biotechnology commands serious national attention. The nation is actively developing comprehensive strategies and infrastructure to manage both the promise and the perils of the bioeconomy.
+                <span class="translatable lang-en">The report highlights Russia's position, noting that biotechnology commands serious national attention. The nation is actively developing comprehensive strategies and infrastructure to manage both the promise and the perils of the bioeconomy.</span>
+                <span class="translatable lang-ja">レポートはロシアの立場を強調し、バイオテクノロジーが国家的な真剣な注目を集めていることを指摘しています。ロシアは、バイオエコノミーの将来性と危険性の両方を管理するための包括的な戦略とインフラを積極的に開発しています。</span>
+                <span class="translatable lang-ru">В докладе освещается позиция России, отмечая, что биотехнологии привлекают серьезное внимание на национальном уровне. Страна активно разрабатывает комплексные стратегии и инфраструктуру для управления как перспективами, так и опасностями биоэкономики.</span>
             </p>
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
                 
                 <div class="bg-white rounded-lg shadow-lg p-6 md:p-8">
-                    <h4 class="text-xl font-bold text-dark-blue mb-6">Key Initiatives & Timeline</h4>
+                    <h4 class="text-xl font-bold text-dark-blue mb-6">
+                        <span class="translatable lang-en">Key Initiatives & Timeline</span>
+                        <span class="translatable lang-ja">主要な取り組みとタイムライン</span>
+                        <span class="translatable lang-ru">Ключевые инициативы и хронология</span>
+                    </h4>
                     <div class="relative">
                         <div class="timeline-line"></div>
                         <div class="timeline-item">
                             <div class="timeline-marker"></div>
-                            <h5 class="font-semibold text-dark-blue">"Sanitary Shield" System</h5>
-                            <p class="text-sm text-gray-600">Establishment of a comprehensive protection system against biological threats, ranked among the world's most effective.</p>
+                            <h5 class="font-semibold text-dark-blue">
+                                <span class="translatable lang-en">"Sanitary Shield" System</span>
+                                <span class="translatable lang-ja">「サニタリー・シールド」システム</span>
+                                <span class="translatable lang-ru">Система "Санитарный щит"</span>
+                            </h5>
+                            <p class="text-sm text-gray-600">
+                                <span class="translatable lang-en">Establishment of a comprehensive protection system against biological threats, ranked among the world's most effective.</span>
+                                <span class="translatable lang-ja">生物学的脅威に対する包括的な保護システムの確立。世界で最も効果的なものの一つにランク付けされている。</span>
+                                <span class="translatable lang-ru">Создание комплексной системы защиты от биологических угроз, считающейся одной из самых эффективных в мире.</span>
+                            </p>
                         </div>
                         <div class="timeline-item">
                             <div class="timeline-marker"></div>
-                            <h5 class="font-semibold text-dark-blue">First COVID-19 Vaccine</h5>
-                            <p class="text-sm text-gray-600">Achieved the distinction of being the first nation to develop and deploy a COVID-19 vaccine.</p>
+                            <h5 class="font-semibold text-dark-blue">
+                                <span class="translatable lang-en">First COVID-19 Vaccine</span>
+                                <span class="translatable lang-ja">初のCOVID-19ワクチン</span>
+                                <span class="translatable lang-ru">Первая вакцина от COVID-19</span>
+                            </h5>
+                            <p class="text-sm text-gray-600">
+                                <span class="translatable lang-en">Achieved the distinction of being the first nation to develop and deploy a COVID-19 vaccine.</span>
+                                <span class="translatable lang-ja">COVID-19ワクチンを世界で初めて開発・展開した国としての栄誉を達成。</span>
+                                <span class="translatable lang-ru">Достижение статуса первой нации, разработавшей и внедрившей вакцину от COVID-19.</span>
+                            </p>
                         </div>
                         <div class="timeline-item">
                             <div class="timeline-marker"></div>
-                            <h5 class="font-semibold text-dark-blue">National Genetic Infrastructure</h5>
-                            <p class="text-sm text-gray-600">Establishing a national genetic information database (Kurchatov Institute) and a network of genetic resource centers.</p>
+                            <h5 class="font-semibold text-dark-blue">
+                                <span class="translatable lang-en">National Genetic Infrastructure</span>
+                                <span class="translatable lang-ja">国家遺伝子インフラ</span>
+                                <span class="translatable lang-ru">Национальная генетическая инфраструктура</span>
+                            </h5>
+                            <p class="text-sm text-gray-600">
+                                <span class="translatable lang-en">Establishing a national genetic information database (Kurchatov Institute) and a network of genetic resource centers.</span>
+                                <span class="translatable lang-ja">国家遺伝情報データベース（クルチャトフ研究所）および遺伝資源センターのネットワークを構築。</span>
+                                <span class="translatable lang-ru">Создание национальной базы генетической информации (Курчатовский институт) и сети национальных центров генетических ресурсов.</span>
+                            </p>
                         </div>
                         <div class="timeline-item">
                             <div class="timeline-marker"></div>
-                            <h5 class="font-semibold text-dark-blue">National Bioeconomy Project</h5>
-                            <p class="text-sm text-gray-600">A comprehensive development project extending through 2036.</p>
+                            <h5 class="font-semibold text-dark-blue">
+                                <span class="translatable lang-en">National Bioeconomy Project</span>
+                                <span class="translatable lang-ja">国家バイオエコノミープロジェクト</span>
+                                <span class="translatable lang-ru">Национальный проект "Биоэкономика"</span>
+                            </h5>
+                            <p class="text-sm text-gray-600">
+                                <span class="translatable lang-en">A comprehensive development project extending through 2036.</span>
+                                <span class="translatable lang-ja">2036年まで続く包括的な開発プロジェクト。</span>
+                                <span class="translatable lang-ru">Комплексный проект развития до 2036 года.</span>
+                            </p>
                         </div>
                         <div class="timeline-item">
                             <div class="timeline-marker"></div>
-                            <h5 class="font-semibold text-dark-blue">Bioeconomy Strategy 2050</h5>
-                            <p class="text-sm text-gray-600">A long-term strategic vision for the national bioeconomy.</p>
+                            <h5 class="font-semibold text-dark-blue">
+                                <span class="translatable lang-en">Bioeconomy Strategy 2050</span>
+                                <span class="translatable lang-ja">バイオエコノミー戦略2050</span>
+                                <span class="translatable lang-ru">Стратегия "Биоэкономика 2050"</span>
+                            </h5>
+                            <p class="text-sm text-gray-600">
+                                <span class="translatable lang-en">A long-term strategic vision for the national bioeconomy.</span>
+                                <span class="translatable lang-ja">国家バイオエコノミーのための長期的な戦略的ビジョン。</span>
+                                <span class="translatable lang-ru">Долгосрочное стратегическое видение национальной биоэкономики.</span>
+                            </p>
                         </div>
                     </div>
                 </div>
 
                 <div class="bg-white rounded-lg shadow-lg p-6">
-                    <h4 class="text-xl font-bold text-dark-blue mb-4 text-center">Components of Biosecurity Posture</h4>
+                    <h4 class="text-xl font-bold text-dark-blue mb-4 text-center">
+                        <span class="translatable lang-en">Components of Biosecurity Posture</span>
+                        <span class="translatable lang-ja">バイオセキュリティ態勢の構成要素</span>
+                        <span class="translatable lang-ru">Компоненты позиции по биобезопасности</span>
+                    </h4>
                     <p class="text-center text-gray-700 mb-4">
-                        Russia's approach, as described in the report, is multi-faceted, balancing active defense, long-term strategy, and international engagement.
+                        <span class="translatable lang-en">Russia's approach, as described in the report, is multi-faceted, balancing active defense, long-term strategy, and international engagement.</span>
+                        <span class="translatable lang-ja">レポートに記述されているロシアのアプローチは多面的であり、積極的防衛、長期戦略、国際的関与のバランスを取っている。</span>
+                        <span class="translatable lang-ru">Подход России, описанный в докладе, многогранен и сочетает в себе активную защиту, долгосрочную стратегию и международное взаимодействие.</span>
                     </p>
                     <div class="chart-container">
                         <canvas id="russiaPostureChart"></canvas>
                     </div>
+                    
+                    <div id="postureLegendContainer" class="mt-4 w-full max-w-md mx-auto"></div>
+
                 </div>
 
             </div>
         </section>
 
         <section class="bg-dark-blue text-white rounded-lg shadow-xl p-8 md:p-10 mt-8 text-center">
-            <h3 class="text-2xl md:text-3xl font-bold mb-4">The Path Forward: A Shared Responsibility</h3>
+            <h3 class="text-2xl md:text-3xl font-bold mb-4">
+                <span class="translatable lang-en">The Path Forward: A Shared Responsibility</span>
+                <span class="translatable lang-ja">前進への道：共有された責任</span>
+                <span class="translatable lang-ru">Путь вперед: Общая ответственность</span>
+            </h3>
             <p class="text-lg md:text-xl text-gray-200 leading-relaxed max-w-3xl mx-auto">
-                Contemporary biological threats demand rigorous and continuous collaboration. By embracing principles of open dialogue and social responsibility, the global scientific community can work with policymakers to mitigate the risks, ensuring that biotechnology serves humanity's future rather than endangering it.
+                <span class="translatable lang-en">Contemporary biological threats demand rigorous and continuous collaboration. By embracing principles of open dialogue and social responsibility, the global scientific community can work with policymakers to mitigate the risks, ensuring that biotechnology serves humanity's future rather than endangering it.</span>
+                <span class="translatable lang-ja">現代の生物学的脅威は、厳格かつ継続的な協力を要求します。開かれた対話と社会的責任の原則を受け入れることにより、世界の科学界は政策立案者と協力してリスクを軽減し、バイオテクノロジーが人類の未来を危険にさらすのではなく、人類に奉仕することを確実にすることができます。</span>
+                <span class="translatable lang-ru">Современные биологические угрозы требуют тесного и постоянного сотрудничества. Придерживаясь принципов открытого диалога и социальной ответственности, мировое научное сообщество может работать с политиками над снижением рисков, гарантируя, что биотехнологии служат будущему человечества, а не ставят его под угрозу.</span>
             </p>
         </section>
 
     </main>
 
     <footer class="text-center p-6 text-sm text-mid-gray mt-8">
-        Infographic created based on "Biosecurity: The Global Challenge of the 21st Century" by Prof. R. G. Vasilov.
+        <p>
+            <span class="translatable lang-en">Infographic created based on "Biosecurity: The Global Challenge of the 21st Century" by Prof. R. G. Vasilov.</span>
+            <span class="translatable lang-ja">R. G. Vasilov教授による「バイオセキュリティ：21世紀の地球規模の課題」に基づき作成されたインフォグラフィック。</span>
+            <span class="translatable lang-ru">Инфографика создана на основе доклада проф. Р. Г. Василова "Биобезопасность: Глобальный вызов 21-го века".</span>
+        </p>
     </footer>
 
     <script>
-        window.onload = function() {
-            
-            function wrapLabels(label, maxWidth) {
-                if (typeof label !== 'string') {
-                    return label;
-                }
-                const words = label.split(' ');
-                let lines = [];
-                let currentLine = '';
-                for (const word of words) {
-                    if ((currentLine + ' ' + word).trim().length > maxWidth && currentLine.length > 0) {
-                        lines.push(currentLine.trim());
-                        currentLine = word;
-                    } else {
-                        currentLine = (currentLine + ' ' + word).trim();
-                    }
-                }
-                if (currentLine.length > 0) {
-                    lines.push(currentLine.trim());
-                }
-                return lines.length > 0 ? lines : [label];
-            }
+        // Global variable to hold the chart instance
+        let myPostureChart;
 
-            const multiLineTooltipTitle = {
-                callbacks: {
-                    title: function(tooltipItems) {
-                        const item = tooltipItems[0];
-                        if (!item) return '';
-                        let label = item.chart.data.labels[item.dataIndex];
-                        if (Array.isArray(label)) {
-                            return label.join(' ');
-                        } else {
-                            return label;
-                        }
-                    }
-                }
-            };
-
-            const postureData = {
-                labels: [
+        // Translation data for the chart and legend
+        const translations = {
+            en: {
+                title: "Biosecurity: The Global Challenge",
+                chartLabels: [
                     'Active Defense (Sanitary Shield)',
                     'National Strategy (2036/2050)',
                     'Research Infrastructure (Kurchatov)',
                     'Global Engagement (Pugwash)'
-                ].map(label => wrapLabels(label, 16)),
+                ]
+            },
+            ja: {
+                title: "バイオセキュリティ：地球規模の課題",
+                chartLabels: [
+                    '積極的防衛（サニタリー・シールド）',
+                    '国家戦略（2036/2050年）',
+                    '研究インフラ（クルチャトフ）',
+                    'グローバルな関与（パグウォッシュ）'
+                ]
+            },
+            ru: {
+                title: "Биобезопасность: Глобальный вызов",
+                chartLabels: [
+                    'Активная защита ("Санитарный щит")',
+                    'Национальная стратегия (2036/2050)',
+                    'Исследовательская инфраструктура (Курчатовский)',
+                    'Глобальное участие (Пагвош)'
+                ]
+            }
+        };
+
+        // Function to switch the language
+        function switchLanguage(lang) {
+            // Set the lang attribute on the <html> tag
+            document.documentElement.lang = lang;
+
+            // Update page title
+            document.title = translations[lang].title;
+
+            // Update active state for buttons
+            document.querySelectorAll('.lang-switcher button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(`btn-${lang}`).classList.add('active');
+
+            // Update Chart.js labels
+            if (myPostureChart) {
+                const newLabels = translations[lang].chartLabels.map(label => wrapLabels(label, 16));
+                myPostureChart.data.labels = newLabels;
+                myPostureChart.update();
+            }
+
+            // Update Custom HTML Legend
+            updateLegend(lang);
+        }
+
+        // Function to update the custom HTML legend
+        function updateLegend(lang) {
+            const legendContainer = document.getElementById('postureLegendContainer');
+            if (!legendContainer) return;
+
+            const labels = translations[lang].chartLabels;
+            const colors = [
+                '#01BAEF',
+                '#0B4F6C',
+                '#757575',
+                '#a0dffc'
+            ];
+
+            let legendHtml = '<ul class="flex flex-col space-y-2">';
+            labels.forEach((label, index) => {
+                legendHtml += `
+                    <li class="flex items-center text-sm">
+                        <span class="block w-4 h-4 rounded-sm mr-2 flex-shrink-0" style="background-color: ${colors[index]}"></span>
+                        <span class="text-dark-text">${label}</span>
+                    </li>
+                `;
+            });
+            legendHtml += '</ul>';
+            legendContainer.innerHTML = legendHtml;
+        }
+
+        // Function to wrap labels (for Chart.js canvas)
+        function wrapLabels(label, maxWidth) {
+            if (typeof label !== 'string') {
+                return label;
+            }
+            const words = label.split(' ');
+            let lines = [];
+            let currentLine = '';
+            for (const word of words) {
+                if ((currentLine + ' ' + word).trim().length > maxWidth && currentLine.length > 0) {
+                    lines.push(currentLine.trim());
+                    currentLine = word;
+                } else {
+                    currentLine = (currentLine + ' ' + word).trim();
+                }
+            }
+            if (currentLine.length > 0) {
+                lines.push(currentLine.trim());
+            }
+            return lines.length > 0 ? lines : [label];
+        }
+
+        // Tooltip title callback for Chart.js
+        const multiLineTooltipTitle = {
+            callbacks: {
+                title: function(tooltipItems) {
+                    const item = tooltipItems[0];
+                    if (!item) return '';
+                    let label = item.chart.data.labels[item.dataIndex];
+                    if (Array.isArray(label)) {
+                        return label.join(' ');
+                    } else {
+                        return label;
+                    }
+                }
+            }
+        };
+
+        // Run on page load
+        window.onload = function() {
+            
+            const postureData = {
+                labels: translations['en'].chartLabels.map(label => wrapLabels(label, 16)), // Default to English
                 datasets: [{
                     label: 'Biosecurity Posture Components',
                     data: [35, 25, 25, 15],
@@ -337,7 +618,8 @@ CONFIRMATION: NO SVG graphics or MERMAID JS were used. All diagrams are built wi
 
             const ctxPosture = document.getElementById('russiaPostureChart');
             if (ctxPosture) {
-                new Chart(ctxPosture.getContext('2d'), {
+                // Store the chart in the global variable
+                myPostureChart = new Chart(ctxPosture.getContext('2d'), {
                     type: 'doughnut',
                     data: postureData,
                     options: {
@@ -345,20 +627,16 @@ CONFIRMATION: NO SVG graphics or MERMAID JS were used. All diagrams are built wi
                         maintainAspectRatio: false,
                         plugins: {
                             legend: {
-                                position: 'bottom',
-                                labels: {
-                                    color: '#040F16',
-                                    font: {
-                                        size: 12
-                                    },
-                                    boxWidth: 20
-                                }
+                                display: false // Disable default legend
                             },
                             tooltip: multiLineTooltipTitle
                         }
                     }
                 });
             }
+
+            // Initialize the page with the default language (English)
+            switchLanguage('en');
         };
     </script>
 </body>
